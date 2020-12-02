@@ -1,0 +1,22 @@
+#!/usr/bin/env php
+<?php
+
+// 注册自动加载机制
+spl_autoload_register('autoload', true, true);
+function autoload($class)
+{
+    // 加载系统文件
+    $file = str_replace('\\', '/', __DIR__ . '/' . $class . '.php');
+    if (is_file($file)) {require_once $file;}
+    // 加载通过 composer 安装的插件
+    $composer_autoload_file = str_replace('\\', '/', __DIR__ . '/vendor/autoload.php');
+    require_once $composer_autoload_file;
+}
+
+// 实例化对应控制器
+$ctrl_namespace = '\\application\\Http\\Controller\\' . $argv[1];
+$ctrl_class = new $ctrl_namespace();
+
+// 调用相关方法
+$action = $argv[2];
+$ctrl_class->$action();
